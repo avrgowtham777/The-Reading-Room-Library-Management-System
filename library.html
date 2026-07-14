@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Reading Room — Library Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wood: #2b1d14;
+  --wood-deep: #1d130c;
+  --parchment: #f6efe0;
+  --card: #fbf6ea;
+  --oxblood: #8a3324;
+  --oxblood-deep: #6b2519;
+  --brass: #c9982f;
+  --ink: #2b1d14;
+  --ink-soft: #5a4a3a;
+  --green: #4a5a3f;
+  --line: rgba(43,29,20,0.18);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--wood);
+  background-image:
+    radial-gradient(ellipse at top, rgba(255,255,255,0.04), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 80px);
+  color:var(--ink);
+  font-family:'Source Serif 4', serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding:90px 24px 70px;
+  text-align:center;
+  color:var(--parchment);
+  position:relative;
+}
+.hero::after{
+  content:"";
+  position:absolute; left:50%; bottom:18px; transform:translateX(-50%);
+  width:64px; height:2px; background:var(--brass); opacity:.7;
+}
+.eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  color:var(--brass);
+  margin-bottom:18px;
+}
+.hero h1{
+  font-family:'Fraunces', serif;
+  font-weight:700;
+  font-size:clamp(40px, 7vw, 74px);
+  line-height:1.03;
+  margin:0 0 18px;
+  letter-spacing:-0.01em;
+}
+.hero h1 em{ font-style:italic; font-weight:500; color:var(--brass); }
+.hero p{
+  max-width:560px; margin:0 auto;
+  font-size:18px; line-height:1.6;
+  color:rgba(246,239,224,0.75);
+}
+.hero-meta{
+  margin-top:34px;
+  display:flex; justify-content:center; gap:28px; flex-wrap:wrap;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(246,239,224,0.55);
+}
+.hero-meta span b{ color:var(--brass); display:block; font-size:20px; font-family:'Fraunces',serif; font-weight:600; letter-spacing:0; margin-bottom:4px;}
+
+/* ---------- PANEL (the catalog cabinet) ---------- */
+.panel{
+  background:var(--parchment);
+  border-radius:18px 18px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.35);
+  padding:48px 0 80px;
+}
+.section-title{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-size:28px;
+  margin:0 0 6px;
+  display:flex; align-items:baseline; gap:12px;
+}
+.section-title .tag{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.15em;
+  color:var(--oxblood);
+  background:rgba(138,51,36,0.08);
+  border:1px solid rgba(138,51,36,0.25);
+  padding:3px 8px;
+  border-radius:4px;
+  text-transform:uppercase;
+}
+.section-sub{ color:var(--ink-soft); font-size:15px; margin:0 0 26px; }
+
+/* ---------- TOOLBAR / FORM DRAWER ---------- */
+.drawer{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:26px 28px;
+  margin-bottom:36px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 20px rgba(43,29,20,0.05);
+}
+.drawer-row{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; }
+.field{ display:flex; flex-direction:column; gap:6px; flex:1 1 160px; min-width:140px;}
+.field label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.field input{
+  font-family:'Source Serif 4', serif;
+  font-size:15px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fff;
+  color:var(--ink);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus{ border-color:var(--oxblood); box-shadow:0 0 0 3px rgba(138,51,36,0.12); }
+
+.btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+button{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12.5px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:11px 18px;
+  border-radius:7px;
+  border:1px solid transparent;
+  cursor:pointer;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+button:active{ transform:translateY(1px); }
+.btn-primary{ background:var(--oxblood); color:var(--parchment); }
+.btn-primary:hover{ background:var(--oxblood-deep); }
+.btn-ghost{ background:transparent; color:var(--ink); border-color:var(--line); }
+.btn-ghost:hover{ border-color:var(--ink); }
+.btn-green{ background:var(--green); color:#fff; }
+.btn-green:hover{ opacity:.9; }
+.btn-small{ padding:7px 12px; font-size:11px; }
+
+.msg{
+  margin-top:14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12.5px;
+  padding:9px 12px;
+  border-radius:6px;
+  display:none;
+}
+.msg.show{ display:block; }
+.msg.ok{ background:rgba(74,90,63,0.12); color:var(--green); border:1px solid rgba(74,90,63,0.3); }
+.msg.err{ background:rgba(138,51,36,0.1); color:var(--oxblood); border:1px solid rgba(138,51,36,0.3); }
+
+/* ---------- TOOLBAR for search/filter ---------- */
+.toolbar{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.toolbar input[type="text"]{
+  flex:1 1 240px;
+  font-family:'Source Serif 4', serif;
+  font-size:15px;
+  padding:11px 14px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--card);
+}
+.filters{ display:flex; gap:8px; }
+.chip{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--card);
+  cursor:pointer;
+  color:var(--ink-soft);
+}
+.chip.active{ background:var(--ink); color:var(--parchment); border-color:var(--ink); }
+
+/* ---------- CARD CATALOG GRID ---------- */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+  gap:18px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:20px;
+  position:relative;
+  overflow:hidden;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(43,29,20,0.12); }
+.card::before{
+  content:"";
+  position:absolute; top:0; left:0; width:5px; height:100%;
+  background:var(--green);
+}
+.card.issued::before{ background:var(--oxblood); }
+.card-id{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px; color:var(--ink-soft); letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.card-title{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-size:20px;
+  line-height:1.2;
+  margin:0 0 4px;
+}
+.card-author{ color:var(--ink-soft); font-size:14px; font-style:italic; margin:0 0 14px;}
+.status{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  padding:4px 9px; border-radius:5px;
+  margin-bottom:14px;
+}
+.status.avail{ background:rgba(74,90,63,0.12); color:var(--green); }
+.status.out{ background:rgba(138,51,36,0.1); color:var(--oxblood); }
+.status::before{ content:"●"; font-size:8px; }
+.card-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+.empty{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--ink-soft);
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+}
+
+/* ---------- footer drawer for save/load ---------- */
+.persist{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px dashed var(--line);
+}
+.persist span{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-soft); }
+
+footer{
+  text-align:center;
+  padding:36px 20px 50px;
+  color:rgba(246,239,224,0.4);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+}
+
+@media (max-width:600px){
+  .hero{padding:64px 20px 50px;}
+  .panel{padding:36px 0 60px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">Est. in Java &middot; Rebuilt for the Web</div>
+  <h1>The Reading Room<br><em>Library Catalog</em></h1>
+  <p>A small library system — add titles, issue them to readers, take them back, and keep the shelf in order.</p>
+  <div class="hero-meta">
+    <span><b id="stat-total">0</b>Titles</span>
+    <span><b id="stat-avail">0</b>On the shelf</span>
+    <span><b id="stat-out">0</b>Checked out</span>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="wrap">
+
+    <div class="section-title"><span class="tag">01</span> Add to the shelf</div>
+    <p class="section-sub">Register a new book into the catalog.</p>
+
+    <div class="drawer">
+      <div class="drawer-row">
+        <div class="field">
+          <label for="in-id">Book ID</label>
+          <input type="number" id="in-id" placeholder="e.g. 306">
+        </div>
+        <div class="field" style="flex:2 1 220px;">
+          <label for="in-title">Title</label>
+          <input type="text" id="in-title" placeholder="e.g. The Alchemist">
+        </div>
+        <div class="field" style="flex:2 1 220px;">
+          <label for="in-author">Author</label>
+          <input type="text" id="in-author" placeholder="e.g. Paulo Coelho">
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="btn-primary" id="btn-add">Add Book</button>
+        <button class="btn-ghost" id="btn-clear-form">Clear</button>
+      </div>
+      <div class="msg" id="add-msg"></div>
+
+      <div class="persist">
+        <span>Catalog persistence —</span>
+        <button class="btn-green btn-small" id="btn-save">Save catalog</button>
+        <button class="btn-ghost btn-small" id="btn-load">Load saved catalog</button>
+        <button class="btn-ghost btn-small" id="btn-reset">Reset to default 5 books</button>
+      </div>
+      <div class="msg" id="persist-msg"></div>
+    </div>
+
+    <div class="section-title"><span class="tag">02</span> The shelf</div>
+    <p class="section-sub">Search, issue, return, or remove a title.</p>
+
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="Search by title, author, or Book ID…">
+      <div class="filters">
+        <div class="chip active" data-filter="all">All</div>
+        <div class="chip" data-filter="avail">Available</div>
+        <div class="chip" data-filter="out">Issued</div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none;">No books match your search.</div>
+
+  </div>
+</div>
+
+<footer>Originally written in Java — Book, Member, Library &amp; LibraryOperations classes — now running entirely in your browser.</footer>
+
+<script>
+const STORAGE_KEY = 'reading_room_catalog_v1';
+
+function defaultBooks(){
+  return [
+    {bookID:301, title:"Pushpa", author:"Allu Arjun", isIssued:true},
+    {bookID:302, title:"Temper", author:"Tarak", isIssued:true},
+    {bookID:303, title:"Salaar", author:"Prabhas", isIssued:true},
+    {bookID:304, title:"Athadu", author:"Mahesh", isIssued:true},
+    {bookID:305, title:"Chirutha", author:"Ram Charan", isIssued:true},
+  ];
+}
+
+let books = JSON.parse(JSON.stringify(defaultBooks()));
+let filterMode = 'all';
+let searchTerm = '';
+
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+
+function findBook(id){
+  return books.find(b => b.bookID === id) || null;
+}
+
+function showMsg(el, text, ok){
+  el.textContent = text;
+  el.className = 'msg show ' + (ok ? 'ok' : 'err');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>{ el.classList.remove('show'); }, 3200);
+}
+
+function render(){
+  // stats
+  document.getElementById('stat-total').textContent = books.length;
+  document.getElementById('stat-avail').textContent = books.filter(b=>!b.isIssued).length;
+  document.getElementById('stat-out').textContent = books.filter(b=>b.isIssued).length;
+
+  let list = books.slice();
+
+  if(filterMode === 'avail') list = list.filter(b=>!b.isIssued);
+  if(filterMode === 'out') list = list.filter(b=>b.isIssued);
+
+  if(searchTerm.trim()){
+    const q = searchTerm.trim().toLowerCase();
+    list = list.filter(b =>
+      String(b.bookID).includes(q) ||
+      b.title.toLowerCase().includes(q) ||
+      b.author.toLowerCase().includes(q)
+    );
+  }
+
+  grid.innerHTML = '';
+  if(list.length === 0){
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.forEach(b=>{
+    const card = document.createElement('div');
+    card.className = 'card' + (b.isIssued ? ' issued' : '');
+    card.innerHTML = `
+      <div class="card-id">BOOK ID · ${b.bookID}</div>
+      <h3 class="card-title">${escapeHtml(b.title)}</h3>
+      <p class="card-author">by ${escapeHtml(b.author)}</p>
+      <div class="status ${b.isIssued ? 'out' : 'avail'}">${b.isIssued ? 'Issued' : 'Available'}</div>
+      <div class="card-actions">
+        ${b.isIssued
+          ? `<button class="btn-green btn-small" data-action="return" data-id="${b.bookID}">Return</button>`
+          : `<button class="btn-primary btn-small" data-action="issue" data-id="${b.bookID}">Issue</button>`
+        }
+        <button class="btn-ghost btn-small" data-action="remove" data-id="${b.bookID}">Remove</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+grid.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-action]');
+  if(!btn) return;
+  const id = parseInt(btn.dataset.id, 10);
+  const action = btn.dataset.action;
+  const b = findBook(id);
+  if(!b) return;
+
+  if(action === 'issue'){ b.isIssued = true; }
+  if(action === 'return'){ b.isIssued = false; }
+  if(action === 'remove'){ books = books.filter(x => x.bookID !== id); }
+
+  render();
+});
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    filterMode = chip.dataset.filter;
+    render();
+  });
+});
+
+document.getElementById('search').addEventListener('input', (e)=>{
+  searchTerm = e.target.value;
+  render();
+});
+
+document.getElementById('btn-add').addEventListener('click', ()=>{
+  const idEl = document.getElementById('in-id');
+  const titleEl = document.getElementById('in-title');
+  const authorEl = document.getElementById('in-author');
+  const msg = document.getElementById('add-msg');
+
+  const id = parseInt(idEl.value, 10);
+  const title = titleEl.value.trim();
+  const author = authorEl.value.trim();
+
+  if(!id || isNaN(id)){ showMsg(msg, 'Enter a valid numeric Book ID.', false); return; }
+  if(!title || !author){ showMsg(msg, 'Title and author cannot be empty.', false); return; }
+  if(findBook(id)){ showMsg(msg, `Book ID ${id} already exists.`, false); return; }
+
+  books.push({bookID:id, title, author, isIssued:false});
+  idEl.value=''; titleEl.value=''; authorEl.value='';
+  showMsg(msg, `"${title}" added to the catalog.`, true);
+  render();
+});
+
+document.getElementById('btn-clear-form').addEventListener('click', ()=>{
+  document.getElementById('in-id').value='';
+  document.getElementById('in-title').value='';
+  document.getElementById('in-author').value='';
+});
+
+document.getElementById('btn-save').addEventListener('click', ()=>{
+  const msg = document.getElementById('persist-msg');
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    showMsg(msg, 'Catalog saved to this browser.', true);
+  }catch(err){
+    showMsg(msg, 'Could not save catalog.', false);
+  }
+});
+
+document.getElementById('btn-load').addEventListener('click', ()=>{
+  const msg = document.getElementById('persist-msg');
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){ showMsg(msg, 'No saved catalog found yet.', false); return; }
+  try{
+    books = JSON.parse(raw);
+    showMsg(msg, 'Catalog loaded.', true);
+    render();
+  }catch(err){
+    showMsg(msg, 'Saved catalog was corrupted.', false);
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  books = JSON.parse(JSON.stringify(defaultBooks()));
+  const msg = document.getElementById('persist-msg');
+  showMsg(msg, 'Reset to the original 5 books.', true);
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
